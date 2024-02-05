@@ -3,6 +3,7 @@ package org.shopping_guru.activity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.shopping_guru.dynamodb.ProductCachingDao;
 import org.shopping_guru.dynamodb.ProductDao;
 import org.shopping_guru.models.requests.ScrapeProductsRequest;
 import org.shopping_guru.models.requests.ScrapeProductsRequestOrig;
@@ -14,12 +15,15 @@ public class ScrapeProductsTest {
     @Mock
     ProductDao productDao;
 
+    @Mock
+    ProductCachingDao cachingDao;
+
     private ScrapeProductsActivity scrapeProductsActivity;
 
     @BeforeEach
     public void setUp() {
         initMocks(this);
-        scrapeProductsActivity = new ScrapeProductsActivity(productDao);
+        scrapeProductsActivity = new ScrapeProductsActivity(productDao, cachingDao);
 
     }
 
@@ -29,7 +33,7 @@ public class ScrapeProductsTest {
         ScrapeProductsRequest scrapeProductsRequest = new ScrapeProductsRequest();
         scrapeProductsRequest.setPrice(40.0);
         scrapeProductsRequest.setResultsNum(20);
-        scrapeProductsRequest.setSearchPhrase("large bath towels");
+        scrapeProductsRequest.setSearchPhrase("hand towels");
 
 
 

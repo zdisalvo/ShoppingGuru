@@ -1,7 +1,16 @@
 package org.shopping_guru.dynamodb.models;
 
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
+
+import java.util.concurrent.atomic.AtomicLong;
+
+@DynamoDBTable(tableName = "products")
 public class Product {
 
+
+    private Long productId;
 
     private String title;
 
@@ -16,6 +25,17 @@ public class Product {
     private Integer reviews;
     private String thumbnail;
 
+
+    @DynamoDBHashKey(attributeName = "productId")
+    public Long getProductId() {
+        return productId;
+    }
+
+    public void setProductId(Long productId) {
+        this.productId = productId;
+    }
+
+    @DynamoDBAttribute(attributeName = "title")
     public String getTitle() {
         return title;
     }
@@ -24,6 +44,7 @@ public class Product {
         this.title = title;
     }
 
+    @DynamoDBAttribute(attributeName = "price")
     public String getPrice() {
         return price;
     }
@@ -32,14 +53,17 @@ public class Product {
         this.price = price;
     }
 
+    @DynamoDBAttribute(attributeName = "rating")
     public Double getRating() {
         return rating;
     }
+
 
     public void setRating(Double rating) {
         this.rating = rating;
     }
 
+    @DynamoDBAttribute(attributeName = "reviews")
     public Integer getReviews() {
         return reviews;
     }
@@ -48,6 +72,7 @@ public class Product {
         this.reviews = reviews;
     }
 
+    @DynamoDBAttribute(attributeName = "link")
     public String getLink() {
         return link;
     }
@@ -56,6 +81,7 @@ public class Product {
         this.link = link;
     }
 
+    @DynamoDBAttribute(attributeName = "thumbnail")
     public String getThumbnail() {
         return thumbnail;
     }
@@ -64,6 +90,7 @@ public class Product {
         this.thumbnail = thumbnail;
     }
 
+    @DynamoDBAttribute(attributeName = "source")
     public String getSource() {
         return source;
     }
@@ -75,7 +102,8 @@ public class Product {
     @Override
     public String toString() {
         return "Product{" +
-                "title='" + title + '\'' +
+                "productId=" + productId +
+                ", title='" + title + '\'' +
                 ", price='" + price + '\'' +
                 ", link='" + link + '\'' +
                 ", source='" + source + '\'' +

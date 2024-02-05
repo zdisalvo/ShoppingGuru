@@ -1,6 +1,7 @@
 package org.shopping_guru.dynamodb;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
+import org.shopping_guru.dynamodb.models.Product;
 import org.shopping_guru.dynamodb.models.ProductOrig;
 import org.shopping_guru.exceptions.ProductNotFoundException;
 import org.shopping_guru.util.DynamoDbClientProvider;
@@ -16,8 +17,8 @@ public class ProductDao {
         this.mapper = mapper;
     }
 
-    public ProductOrig getProductById(String id) {
-        ProductOrig product = this.mapper.load(ProductOrig.class, id);
+    public Product getProductById(Long id) {
+        Product product = this.mapper.load(Product.class, id);
 
         if (product == null) {
             throw new ProductNotFoundException("Could not find product with id: " + id);
@@ -26,11 +27,13 @@ public class ProductDao {
         return product;
     }
 
-    public ProductOrig saveProduct(ProductOrig product) {
+    public Product saveProduct(Product product) {
         DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(DynamoDbClientProvider.getDynamoDBClient());
 
         dynamoDBMapper.save(product);
 
         return product;
     }
+
+
 }

@@ -7,6 +7,7 @@ import com.google.api.client.http.HttpRequestInitializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.shopping_guru.converters.ProductConverter;
+import org.shopping_guru.dynamodb.ProductCachingDao;
 import org.shopping_guru.dynamodb.ProductDao;
 import org.shopping_guru.dynamodb.models.Product;
 import org.shopping_guru.dynamodb.models.ProductOrig;
@@ -46,10 +47,13 @@ public class ScrapeProductsActivity implements RequestHandler<ScrapeProductsRequ
 
     private final Logger log = LogManager.getLogger();
     private final ProductDao productDao;
+    private final ProductCachingDao cachingDao;
 
     @Inject
-    public ScrapeProductsActivity(ProductDao productDao) {
+    public ScrapeProductsActivity(ProductDao productDao, ProductCachingDao cachingDao) {
+
         this.productDao = productDao;
+        this.cachingDao = cachingDao;
     }
 
     @Override
@@ -95,6 +99,8 @@ public class ScrapeProductsActivity implements RequestHandler<ScrapeProductsRequ
 
         for (int i = 0 ; i < Math.min(products.size(), scrapeProductsRequest.getResultsNum()) ; i++) {
             Product prod = products.get(i);
+            productDao.saveProduct(prod);
+            cachingDao.getProductById(prod.getProductId());
             System.out.println(prod.toString());
         }
 

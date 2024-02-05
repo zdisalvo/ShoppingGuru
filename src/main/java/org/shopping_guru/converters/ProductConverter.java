@@ -10,10 +10,13 @@ import org.shopping_guru.dynamodb.models.ProductOrig;
 
 
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class ProductConverter {
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
+
+    private static final AtomicLong ID_COUNTER = new AtomicLong(10000);
 
 
     public static Product toProduct(String json) {
@@ -22,6 +25,7 @@ public class ProductConverter {
 
         try {
             Product product = MAPPER.readValue(json, Product.class);
+            product.setProductId(ID_COUNTER.getAndIncrement());
             return product;
         } catch (JsonMappingException e) {
             throw new RuntimeException(e);
