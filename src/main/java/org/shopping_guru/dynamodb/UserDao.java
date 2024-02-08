@@ -26,6 +26,16 @@ public class UserDao {
         return user;
     }
 
+    public User getUserByIP(String ipAddress) {
+        User user = this.mapper.load(User.class, ipAddress);
+
+        if (user == null) {
+            throw new UserNotFoundException("Could not find user with email: " + ipAddress);
+        }
+
+        return user;
+    }
+
     public User saveUser(User user) {
         DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(DynamoDbClientProvider.getDynamoDBClient());
 

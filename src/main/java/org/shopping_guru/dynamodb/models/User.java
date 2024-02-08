@@ -7,12 +7,14 @@ import org.shopping_guru.converters.PreferencesListConverter;
 @DynamoDBTable(tableName = "users")
 public class User {
 
+
     private String firstName;
     private String lastName;
     private String email;
     private String password;
     private List<String> preferences;
-    private List<ProductOrig> wishList;
+    private List<Product> wishList;
+
 
 
     @DynamoDBAttribute(attributeName = "firstName")
@@ -51,6 +53,7 @@ public class User {
         this.password = password;
     }
 
+
     @DynamoDBTypeConverted(converter = PreferencesListConverter.class)
     @DynamoDBAttribute(attributeName = "preferences")
     public List<String> getPreferences() {
@@ -63,11 +66,11 @@ public class User {
 
     //TODO DynamoDB Type Converter
     @DynamoDBAttribute(attributeName = "wishList")
-    public List<ProductOrig> getWishList() {
+    public List<Product> getWishList() {
         return wishList;
     }
 
-    public void setWishList(List<ProductOrig> wishList) {
+    public void setWishList(List<Product> wishList) {
         this.wishList = wishList;
     }
 }

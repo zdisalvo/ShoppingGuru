@@ -10,6 +10,7 @@ import org.shopping_guru.dynamodb.models.ProductOrig;
 
 
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class ProductConverter {
@@ -41,6 +42,14 @@ public class ProductConverter {
     public static String toJson(Product product) {
         try {
             return MAPPER.writeValueAsString(product);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static String toJson(List<Product> products) {
+        try {
+            return MAPPER.writeValueAsString(products);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }

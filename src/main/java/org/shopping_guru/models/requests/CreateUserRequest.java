@@ -1,5 +1,6 @@
 package org.shopping_guru.models.requests;
 
+import org.shopping_guru.dynamodb.models.Product;
 import org.shopping_guru.dynamodb.models.ProductOrig;
 import org.shopping_guru.models.UserModel;
 
@@ -13,7 +14,7 @@ public class CreateUserRequest {
     private String email;
     private String password;
     private List<String> preferences;
-    private List<ProductOrig> wishList;
+    private Product wishList;
 
     public CreateUserRequest() {}
 
@@ -65,11 +66,11 @@ public class CreateUserRequest {
         this.preferences = preferences;
     }
 
-    public List<ProductOrig> getWishList() {
+    public Product getWishList() {
         return wishList;
     }
 
-    public void setWishList(List<ProductOrig> wishList) {
+    public void setWishList(Product wishList) {
         this.wishList = wishList;
     }
 
@@ -105,7 +106,7 @@ public class CreateUserRequest {
         private String email;
         private String password;
         private List<String> preferences;
-        private List<ProductOrig> wishList;
+        private Product wishList;
 
         public Builder withFirstName(String firstNameToUse) {
             this.firstName = firstNameToUse;
@@ -132,7 +133,7 @@ public class CreateUserRequest {
             return this;
         }
 
-        public Builder withWishList(List<ProductOrig> wishListToUse) {
+        public Builder withWishList(Product wishListToUse) {
             this.wishList = wishListToUse;
             return this;
         }

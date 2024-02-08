@@ -9,12 +9,12 @@ import org.shopping_guru.dependency.ServiceComponent;
 import org.shopping_guru.models.requests.ScrapeProductsRequest;
 import org.shopping_guru.models.results.ScrapeProductsResult;
 
-public class ScrapeProductsActivityProvider implements RequestHandler<ScrapeProductsRequest, ScrapeProductsResult> {
+public class ScrapeProductsActivityProvider implements RequestHandler<ScrapeProductsRequest, String> {
 
     public ScrapeProductsActivityProvider(){}
 
     @Override
-    public ScrapeProductsResult handleRequest(final ScrapeProductsRequest scrapeProductsRequest, Context context) {
+    public String handleRequest(final ScrapeProductsRequest scrapeProductsRequest, Context context) {
         return getDagger().handleRequest(scrapeProductsRequest, context);
     }
 

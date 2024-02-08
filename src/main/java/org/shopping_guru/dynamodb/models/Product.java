@@ -10,20 +10,24 @@ import java.util.concurrent.atomic.AtomicLong;
 public class Product {
 
 
-    private Long productId;
+
+
+    private String source;
+
 
     private String title;
 
     private String price;
 
-    private String link;
-
-    private String source;
 
     private Double rating;
 
     private Integer reviews;
+    private Long productId;
     private String thumbnail;
+
+    private String link;
+
 
 
     @DynamoDBHashKey(attributeName = "productId")

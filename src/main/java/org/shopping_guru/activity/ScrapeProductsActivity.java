@@ -43,7 +43,7 @@ import org.shopping_guru.serpapi.SerpApiSearchException;
 import java.util.List;
 
 
-public class ScrapeProductsActivity implements RequestHandler<ScrapeProductsRequest, ScrapeProductsResult> {
+public class ScrapeProductsActivity implements RequestHandler<ScrapeProductsRequest, String> {
 
     private final Logger log = LogManager.getLogger();
     private final ProductDao productDao;
@@ -57,7 +57,7 @@ public class ScrapeProductsActivity implements RequestHandler<ScrapeProductsRequ
     }
 
     @Override
-    public ScrapeProductsResult handleRequest(ScrapeProductsRequest scrapeProductsRequest, Context context) {
+    public String handleRequest(ScrapeProductsRequest scrapeProductsRequest, Context context) {
 
         log.info("Received ScrapeProductsRequest {}", scrapeProductsRequest);
 
@@ -104,9 +104,11 @@ public class ScrapeProductsActivity implements RequestHandler<ScrapeProductsRequ
             System.out.println(prod.toString());
         }
 
-        return ScrapeProductsResult.builder()
-                .withProduct(products)
-                .build();
+//        return ScrapeProductsResult.builder()
+//                .withProduct(products)
+//                .build();
+
+        return ProductConverter.toJson(products);
     }
 
 }
