@@ -10,8 +10,6 @@ import java.util.concurrent.atomic.AtomicLong;
 public class Product {
 
 
-
-
     private String source;
 
 
