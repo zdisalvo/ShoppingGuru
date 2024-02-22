@@ -10,6 +10,7 @@ import org.shopping_guru.dynamodb.UserCachingDao;
 import org.shopping_guru.dynamodb.UserDao;
 import org.shopping_guru.dynamodb.models.Product;
 import org.shopping_guru.dynamodb.models.User;
+import org.shopping_guru.exceptions.UserNotFoundException;
 import org.shopping_guru.models.requests.SaveProductsRequest;
 import org.shopping_guru.models.requests.ScrapeProductsRequest;
 
@@ -36,17 +37,25 @@ public class SaveProductsActivity implements RequestHandler<SaveProductsRequest,
 
 
     @Override
-    public String handleRequest(SaveProductsRequest saveProductsRequest, Context context) {
+    public String handleRequest(SaveProductsRequest saveProductsRequest, Context context) throws UserNotFoundException{
 
-        User user = new User();
+        User user = userCachingDao.getUserByEmail(saveProductsRequest.getEmailOrIp());
 
-        if (userCachingDao.getUserByEmail(saveProductsRequest.getEmailOrIp()) != null) {
+        if (user.getEmail() != null) {
             user = userCachingDao.getUserByEmail(saveProductsRequest.getEmailOrIp());
             if (user.getWishList() == null) user.setWishList(new ArrayList<>());
         } else {
             user.setEmail(saveProductsRequest.getEmailOrIp());
             user.setWishList(new ArrayList<>());
         }
+
+//        try {
+//            user = userCachingDao.getUserByEmail(saveProductsRequest.getEmailOrIp());
+//            if (user.getWishList() == null) user.setWishList(new ArrayList<>());
+//        } catch (UserNotFoundException e) {
+//            user.setEmail(saveProductsRequest.getEmailOrIp());
+//            user.setWishList(new ArrayList<>());
+//        }
 
         Product product = productCachingDao.getProductById(saveProductsRequest.getProductId());
 

@@ -26,7 +26,7 @@ public class User {
         this.firstName = firstName;
     }
 
-    @DynamoDBRangeKey(attributeName = "lastName")
+    @DynamoDBAttribute(attributeName = "lastName")
     public String getLastName() {
         return lastName;
     }

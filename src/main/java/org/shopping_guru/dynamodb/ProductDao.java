@@ -20,6 +20,7 @@ public class ProductDao {
     public Product getProductById(Long id) {
         Product product = this.mapper.load(Product.class, id);
 
+
         if (product == null) {
             throw new ProductNotFoundException("Could not find product with id: " + id);
         }

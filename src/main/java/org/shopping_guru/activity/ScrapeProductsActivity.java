@@ -61,7 +61,7 @@ public class ScrapeProductsActivity implements RequestHandler<ScrapeProductsRequ
 
         log.info("Received ScrapeProductsRequest {}", scrapeProductsRequest);
 
-        ProductOrig product = new ProductOrig();
+        //ProductOrig product = new ProductOrig();
 
         ProductReview review = new ProductReview();
 

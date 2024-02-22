@@ -16,11 +16,14 @@ public class UserDao {
         this.mapper = mapper;
     }
 
-    public User getUserByEmail(String email) {
+    public User getUserByEmail(String email) throws UserNotFoundException {
+
         User user = this.mapper.load(User.class, email);
 
+        //TODO need to propogate this exception
         if (user == null) {
-            throw new UserNotFoundException("Could not find user with email: " + email);
+            return new User();
+            //throw new UserNotFoundException("Could not find user with email: " + email);
         }
 
         return user;
