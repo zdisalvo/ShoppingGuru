@@ -4,6 +4,7 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.shopping_guru.converters.ProductConverter;
 import org.shopping_guru.dynamodb.ProductCachingDao;
 import org.shopping_guru.dynamodb.ProductDao;
 import org.shopping_guru.dynamodb.UserCachingDao;
@@ -36,18 +37,29 @@ public class SaveProductsActivity implements RequestHandler<SaveProductsRequest,
     }
 
 
+    /**
+     *
+     * @param saveProductsRequest The Lambda Function input
+     * @param context The Lambda execution environment context object.
+     * Method is synchronized so that multiple simultaneous requests
+     * from the same user don't get confused
+     * @return
+     * @throws UserNotFoundException
+     */
     @Override
-    public String handleRequest(SaveProductsRequest saveProductsRequest, Context context) throws UserNotFoundException{
+    public synchronized String handleRequest(SaveProductsRequest saveProductsRequest, Context context) throws UserNotFoundException{
 
         User user = userCachingDao.getUserByEmail(saveProductsRequest.getEmailOrIp());
 
-        if (user.getEmail() != null) {
-            user = userCachingDao.getUserByEmail(saveProductsRequest.getEmailOrIp());
-            if (user.getWishList() == null) user.setWishList(new ArrayList<>());
-        } else {
-            user.setEmail(saveProductsRequest.getEmailOrIp());
-            user.setWishList(new ArrayList<>());
-        }
+        if (saveProductsRequest.getSaving() == 1) {
+
+            if (user.getEmail() != null) {
+                user = userCachingDao.getUserByEmail(saveProductsRequest.getEmailOrIp());
+                if (user.getWishList() == null) user.setWishList(new ArrayList<>());
+            } else {
+                user.setEmail(saveProductsRequest.getEmailOrIp());
+                user.setWishList(new ArrayList<>());
+            }
 
 //        try {
 //            user = userCachingDao.getUserByEmail(saveProductsRequest.getEmailOrIp());
@@ -57,15 +69,32 @@ public class SaveProductsActivity implements RequestHandler<SaveProductsRequest,
 //            user.setWishList(new ArrayList<>());
 //        }
 
-        Product product = productCachingDao.getProductById(saveProductsRequest.getProductId());
+            Product product = productCachingDao.getProductById(saveProductsRequest.getProductId());
 
-        List<Product> wishList = user.getWishList();
-        wishList.add(product);
+            List<Product> wishList = user.getWishList();
+            wishList.add(product);
 
-        user.setWishList(wishList);
+            user.setWishList(wishList);
 
-        userDao.saveUser(user);
+            userDao.saveUser(user);
 
-        return "Product Saved Successfully\n" + product.toString();
+            return ProductConverter.toJson(product);
+        } else {
+            Product product = productCachingDao.getProductById(saveProductsRequest.getProductId());
+
+            List<Product> wishList = user.getWishList();
+
+            for (int i = 0 ; i < wishList.size() ; i++) {
+                if (wishList.get(i).getProductId().equals(product.getProductId())) {
+                    wishList.remove(i);
+                }
+            }
+
+            user.setWishList(wishList);
+
+            userDao.saveUser(user);
+
+            return ProductConverter.toJson(product);
+        }
     }
 }

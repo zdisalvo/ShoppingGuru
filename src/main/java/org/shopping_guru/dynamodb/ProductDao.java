@@ -36,5 +36,13 @@ public class ProductDao {
         return product;
     }
 
+    public Product deleteProduct(Product product) {
+        DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(DynamoDbClientProvider.getDynamoDBClient());
+
+        dynamoDBMapper.delete(product);
+
+        return product;
+    }
+
 
 }
