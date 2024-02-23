@@ -108,7 +108,9 @@ public class ScrapeProductsActivity implements RequestHandler<ScrapeProductsRequ
         } catch (SerpApiSearchException | InterruptedException | ExecutionException e) {
             throw new RuntimeException(e);
         }
-        if (results.getAsJsonArray("shopping_results") == null) {
+        if (results.getAsJsonArray("shopping_results") == null ||
+                results.getAsJsonArray("shopping_results").size() <
+                scrapeProductsRequest.getResultsNum()) {
             try {
                 results = result2.get().getJson();
                 System.out.println(results.getAsJsonArray("shopping_results"));

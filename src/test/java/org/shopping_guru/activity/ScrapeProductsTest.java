@@ -31,9 +31,9 @@ public class ScrapeProductsTest {
     public void handleRequest_PageIsScraped_andPrinted() {
 
         ScrapeProductsRequest scrapeProductsRequest = new ScrapeProductsRequest();
-        scrapeProductsRequest.setPrice(200.0);
+        scrapeProductsRequest.setPrice(1000.0);
         scrapeProductsRequest.setResultsNum(10);
-        scrapeProductsRequest.setSearchPhrase("skateboard");
+        scrapeProductsRequest.setSearchPhrase("tv");
 
 
 
