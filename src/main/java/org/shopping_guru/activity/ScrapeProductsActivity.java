@@ -30,6 +30,7 @@ import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.*;
 import java.util.regex.Pattern;
 
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
@@ -38,12 +39,13 @@ import com.google.api.services.customsearch.model.Result;
 import com.google.api.services.customsearch.model.Search;
 import org.shopping_guru.serpapi.GoogleSearch;
 import org.shopping_guru.serpapi.SerpApiSearchException;
+import org.shopping_guru.util.GoogleSearchCallable;
 
 
 import java.util.List;
 
 
-public class ScrapeProductsActivity implements RequestHandler<ScrapeProductsRequest, String> {
+public class ScrapeProductsActivity implements RequestHandler<ScrapeProductsRequest, String>{
 
     private final Logger log = LogManager.getLogger();
     private final ProductDao productDao;
@@ -63,53 +65,73 @@ public class ScrapeProductsActivity implements RequestHandler<ScrapeProductsRequ
 
         //ProductOrig product = new ProductOrig();
 
-        //ProductReview review = new ProductReview();
+        ProductReview review = new ProductReview();
 
         Map<String, String> parameter = new HashMap<>();
         parameter.put("engine", "google_shopping");
         parameter.put("q", scrapeProductsRequest.getSearchPhrase());
-        //TODO Location
-        parameter.put("location", "United States");
+        //TODO Location - Location matters for certain products - e.g skateboard
+        parameter.put("location", "Austin, Texas, United States");
         parameter.put("hl", "en");
         parameter.put("gl", "us");
-        //parameter.put("google_domain", "google.com");
-        //parameter.put("engine", "google_shopping");
+        parameter.put("google_domain", "google.com");
         parameter.put("api_key", GoogleSearch.getApiKey());
-        //parameter.put("safe", "active");
-        //parameter.put("start", "1");
-        parameter.put("num", String.valueOf(Math.min(scrapeProductsRequest.getResultsNum() * 5, 100)));
-        //parameter.put("device", "desktop");
+        parameter.put("safe", "active");
+        parameter.put("start", "1");
+        parameter.put("num", String.valueOf(Math.min(100, scrapeProductsRequest.getResultsNum() * 5)));
+        parameter.put("device", "desktop");
 
-        GoogleSearch googleSearch = new GoogleSearch(parameter);
+        //
+        GoogleSearch result = new GoogleSearch(parameter);
 
-        JsonElement results = googleSearch.shoppingSearch();
+        //add purchase param
+        Map<String, String> parameter2 = new HashMap<>(parameter);
+        parameter2.put("q", "purchase " + parameter.get("q"));
 
-//        JsonObject results = null;
-//        try {
-//            results = search.getJson();
-//        } catch (SerpApiSearchException e) {
-//            throw new RuntimeException(e);
-//        }
-        //System.out.println(results.getAsJsonArray("shopping_results"));
+        //TODO
+        System.out.println(parameter2.get("q"));
+
+        GoogleSearchCallable callable = new GoogleSearchCallable(parameter);
+        GoogleSearchCallable callable2 = new GoogleSearchCallable(parameter2);
+
+        ExecutorService executorService = Executors.newCachedThreadPool();
+
+        Future<GoogleSearch> result1 = executorService.submit(callable);
+        Future<GoogleSearch> result2 = executorService.submit(callable2);
+
+        executorService.shutdown();
+
+        JsonObject results = null;
+        try {
+            results = result1.get().getJson();
+            System.out.println(results.getAsJsonArray("shopping_results"));
+        } catch (SerpApiSearchException | InterruptedException | ExecutionException e) {
+            throw new RuntimeException(e);
+        }
+        if (results.getAsJsonArray("shopping_results") == null) {
+            try {
+                results = result2.get().getJson();
+                System.out.println(results.getAsJsonArray("shopping_results"));
+            } catch (SerpApiSearchException | InterruptedException | ExecutionException x) {
+                throw new RuntimeException();
+            }
+        }
+
 
         List<Product> products = new ArrayList<>();
 
-        //JsonElement shopping_results = results.get("shopping_results");
-
-        System.out.println(results.getAsJsonArray());
-
-        for (JsonElement item : results.getAsJsonArray() ) {
+        for (JsonElement item : results.getAsJsonArray("shopping_results") ) {
             Product prod = ProductConverter.toProduct(item.toString());
-            if (Double.parseDouble(prod.getPrice().substring(1)) <= scrapeProductsRequest.getPrice()
+            if (Double.parseDouble(prod.getPrice().replace(",", "").substring(1)) <= scrapeProductsRequest.getPrice()
                     && products.size() <= scrapeProductsRequest.getResultsNum())
-                    products.add(prod);
+                products.add(prod);
         }
 
         for (int i = 0 ; i < Math.min(products.size(), scrapeProductsRequest.getResultsNum()) ; i++) {
             Product prod = products.get(i);
             productDao.saveProduct(prod);
             cachingDao.getProductById(prod.getProductId());
-            System.out.println(prod);
+            System.out.println(prod.toString());
         }
 
 //        return ScrapeProductsResult.builder()
@@ -118,5 +140,6 @@ public class ScrapeProductsActivity implements RequestHandler<ScrapeProductsRequ
 
         return ProductConverter.toJson(products);
     }
+
 
 }

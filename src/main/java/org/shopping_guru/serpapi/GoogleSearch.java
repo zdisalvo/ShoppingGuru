@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 /***
  * Google Search Results using SerpApi
@@ -96,6 +97,8 @@ public class GoogleSearch extends SerpApiSearch {
 
         return shopping_results;
     }
+
+
 
 // end
 }
