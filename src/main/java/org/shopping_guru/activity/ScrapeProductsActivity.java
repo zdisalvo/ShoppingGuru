@@ -74,10 +74,10 @@ public class ScrapeProductsActivity implements RequestHandler<ScrapeProductsRequ
         parameter.put("location", "Austin, Texas, United States");
         parameter.put("hl", "en");
         parameter.put("gl", "us");
-        parameter.put("google_domain", "google.com");
+        //parameter.put("google_domain", "google.com");
         parameter.put("api_key", GoogleSearch.getApiKey());
-        parameter.put("safe", "active");
-        parameter.put("start", "1");
+        //parameter.put("safe", "active");
+        //parameter.put("start", "1");
         parameter.put("num", String.valueOf(Math.min(100, scrapeProductsRequest.getResultsNum() * 5)));
         parameter.put("device", "desktop");
 
@@ -125,9 +125,12 @@ public class ScrapeProductsActivity implements RequestHandler<ScrapeProductsRequ
             if (Double.parseDouble(prod.getPrice().replace(",", "").substring(1)) <= scrapeProductsRequest.getPrice()
                     && products.size() <= scrapeProductsRequest.getResultsNum())
                 products.add(prod);
+            if (products.size() >= scrapeProductsRequest.getResultsNum()) {
+                break;
+            }
         }
 
-        for (int i = 0 ; i < Math.min(products.size(), scrapeProductsRequest.getResultsNum()) ; i++) {
+        for (int i = 0 ; i < products.size() ; i++) {
             Product prod = products.get(i);
             productDao.saveProduct(prod);
             cachingDao.getProductById(prod.getProductId());
