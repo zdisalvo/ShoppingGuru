@@ -33,7 +33,7 @@ public class ScrapeProductsTest {
         ScrapeProductsRequest scrapeProductsRequest = new ScrapeProductsRequest();
         scrapeProductsRequest.setPrice(40.0);
         scrapeProductsRequest.setResultsNum(20);
-        scrapeProductsRequest.setSearchPhrase("hand towels");
+        scrapeProductsRequest.setSearchPhrase("purchase coffee");
 
 
 
