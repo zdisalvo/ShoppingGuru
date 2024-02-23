@@ -6,6 +6,7 @@ import org.shopping_guru.exceptions.UserNotFoundException;
 import org.shopping_guru.util.DynamoDbClientProvider;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 
 public class UserDao {
 
@@ -22,6 +23,7 @@ public class UserDao {
 
         //TODO need to propogate this exception
         if (user == null) {
+            user.setWishList(new ArrayList<>());
             return new User();
             //throw new UserNotFoundException("Could not find user with email: " + email);
         }

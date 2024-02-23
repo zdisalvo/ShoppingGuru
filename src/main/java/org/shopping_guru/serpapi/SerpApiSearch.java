@@ -25,7 +25,7 @@ public class SerpApiSearch extends Exception {
   /**
    * user secret API key
    */
-  protected String api_key = "f31f84d085f3219d9cf7b1873963972d6c04160e2dd0e8b653de75b37a617660";
+  public String api_key = "f31f84d085f3219d9cf7b1873963972d6c04160e2dd0e8b653de75b37a617660";
 
   /**
   * Current search engine

@@ -2,6 +2,7 @@ package org.shopping_guru.dependency;
 
 
 import dagger.Component;
+import org.shopping_guru.activity.DisplaySavedActivity;
 import org.shopping_guru.activity.SaveProductsActivity;
 import org.shopping_guru.activity.ScrapeProductsActivity;
 
@@ -14,5 +15,7 @@ public interface ServiceComponent {
     ScrapeProductsActivity provideScrapeProductsActivity();
 
     SaveProductsActivity provideSaveProductsActivity();
+
+    DisplaySavedActivity provideDisplaySavedActivity();
 }
 

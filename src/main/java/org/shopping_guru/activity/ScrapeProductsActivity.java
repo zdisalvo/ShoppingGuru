@@ -63,34 +63,42 @@ public class ScrapeProductsActivity implements RequestHandler<ScrapeProductsRequ
 
         //ProductOrig product = new ProductOrig();
 
-        ProductReview review = new ProductReview();
+        //ProductReview review = new ProductReview();
 
         Map<String, String> parameter = new HashMap<>();
         parameter.put("engine", "google_shopping");
         parameter.put("q", scrapeProductsRequest.getSearchPhrase());
         //TODO Location
-        parameter.put("location", "Austin, Texas, United States");
+        parameter.put("location", "United States");
         parameter.put("hl", "en");
         parameter.put("gl", "us");
-        parameter.put("google_domain", "google.com");
+        //parameter.put("google_domain", "google.com");
+        //parameter.put("engine", "google_shopping");
         parameter.put("api_key", GoogleSearch.getApiKey());
-        parameter.put("safe", "active");
-        parameter.put("start", "1");
-        parameter.put("num", String.valueOf(scrapeProductsRequest.getResultsNum() * 5));
-        parameter.put("device", "desktop");
+        //parameter.put("safe", "active");
+        //parameter.put("start", "1");
+        parameter.put("num", String.valueOf(Math.min(scrapeProductsRequest.getResultsNum() * 5, 100)));
+        //parameter.put("device", "desktop");
 
-        GoogleSearch result = new GoogleSearch(parameter);
-        JsonObject results = null;
-        try {
-            results = result.getJson();
-        } catch (SerpApiSearchException e) {
-            throw new RuntimeException(e);
-        }
+        GoogleSearch googleSearch = new GoogleSearch(parameter);
+
+        JsonElement results = googleSearch.shoppingSearch();
+
+//        JsonObject results = null;
+//        try {
+//            results = search.getJson();
+//        } catch (SerpApiSearchException e) {
+//            throw new RuntimeException(e);
+//        }
         //System.out.println(results.getAsJsonArray("shopping_results"));
 
         List<Product> products = new ArrayList<>();
 
-        for (JsonElement item : results.getAsJsonArray("shopping_results") ) {
+        //JsonElement shopping_results = results.get("shopping_results");
+
+        System.out.println(results.getAsJsonArray());
+
+        for (JsonElement item : results.getAsJsonArray() ) {
             Product prod = ProductConverter.toProduct(item.toString());
             if (Double.parseDouble(prod.getPrice().substring(1)) <= scrapeProductsRequest.getPrice()
                     && products.size() <= scrapeProductsRequest.getResultsNum())
@@ -101,7 +109,7 @@ public class ScrapeProductsActivity implements RequestHandler<ScrapeProductsRequ
             Product prod = products.get(i);
             productDao.saveProduct(prod);
             cachingDao.getProductById(prod.getProductId());
-            System.out.println(prod.toString());
+            System.out.println(prod);
         }
 
 //        return ScrapeProductsResult.builder()

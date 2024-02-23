@@ -23,6 +23,8 @@ import java.util.Map;
  */
 public class GoogleSearch extends SerpApiSearch {
 
+    //public Map<String, String> parameter = new HashMap<>();
+
  /**
   * Constructor
   * @param parameter search parameter
@@ -44,25 +46,48 @@ public class GoogleSearch extends SerpApiSearch {
   * @param parameter search parameter
   */
   public GoogleSearch(Map<String, String> parameter) {
-    super(parameter, "google");
+      super(parameter, "google");
   }
 
     public JsonElement shoppingSearch() {
 
-        Map<String, String> parameter = new HashMap<>();
+//        //Map<String, String> parameter = new HashMap<>();
+//
+////        parameter.put("engine", "google_shopping");
+////        parameter.put("q", "Coffee");
+////        parameter.put("location", "Austin, Texas, United States");
+////        parameter.put("hl", "en");
+////        parameter.put("gl", "us");
+//        //parameter.put("api_key", "secret_api_key");
+//
+//        GoogleSearch search = new GoogleSearch(parameter);
+//
+//        JsonObject results = null;
+//        try {
+//            results = search.getJson();
+//        } catch (SerpApiSearchException e) {
+//            throw new RuntimeException(e);
+//        }
+//        JsonElement shopping_results = results.get("shopping_results");
+//        System.out.println(shopping_results.getAsJsonArray());
+//
+//        return shopping_results;
 
-        parameter.put("engine", "google_shopping");
-        parameter.put("q", "Coffee");
-        parameter.put("location", "Austin, Texas, United States");
-        parameter.put("hl", "en");
-        parameter.put("gl", "us");
-        //parameter.put("api_key", "secret_api_key");
+
+//        parameter.put("engine", "google_shopping");
+//        parameter.put("q", "purchase coffee");
+//        parameter.put("location", "Austin, Texas, United States");
+//        parameter.put("hl", "en");
+//        parameter.put("gl", "us");
+//        parameter.put("api_key", GoogleSearch.getApiKey());
 
         GoogleSearch search = new GoogleSearch(parameter);
 
         JsonObject results = null;
         try {
             results = search.getJson();
+            //TODO
+            //System.out.println(results.getAsJsonObject().getAsJsonArray());
         } catch (SerpApiSearchException e) {
             throw new RuntimeException(e);
         }
