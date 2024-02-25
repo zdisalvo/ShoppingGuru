@@ -19,19 +19,19 @@ public class DisplaySavedActivity implements RequestHandler<DisplaySavedRequest,
 
     private final Logger log = LogManager.getLogger();
     private final UserDao userDao;
-    private final UserCachingDao userCachingDao;
+    //private final UserCachingDao userCachingDao;
 
     @Inject
-    public DisplaySavedActivity(UserDao userDao, UserCachingDao userCachingDao) {
+    public DisplaySavedActivity(UserDao userDao) {
         this.userDao = userDao;
-        this.userCachingDao = userCachingDao;
+        //this.userCachingDao = userCachingDao;
     }
 
     @Override
     public String handleRequest(DisplaySavedRequest displaySavedRequest, Context context) {
         User user = new User();
 
-        user = userCachingDao.getUserByEmail(displaySavedRequest.getEmailOrIp());
+        user = userDao.getUserByEmail(displaySavedRequest.getEmailOrIp());
 
 
         List<Product> products = new ArrayList<>();

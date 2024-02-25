@@ -5,6 +5,7 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 import org.shopping_guru.converters.ModelConverter;
 import org.shopping_guru.dynamodb.UserCachingDao;
 import org.shopping_guru.dynamodb.UserDao;
+import org.shopping_guru.dynamodb.models.Product;
 import org.shopping_guru.dynamodb.models.User;
 import org.shopping_guru.exceptions.InvalidAttributeException;
 import org.shopping_guru.models.UserModel;
@@ -20,45 +21,27 @@ import org.shopping_guru.util.CreateValidName;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class CreateUserActivity implements RequestHandler<CreateUserRequest, CreateUserResult> {
 
     private final Logger log = LogManager.getLogger();
     private final UserDao userDao;
-    private final UserCachingDao userCachingDao;
+    //private final UserCachingDao userCachingDao;
 
     @Inject
-    public CreateUserActivity(UserDao userDao, UserCachingDao userCachingDao) {
+    public CreateUserActivity(UserDao userDao) {
 
         this.userDao = userDao;
-        this.userCachingDao = userCachingDao;
+        //this.userCachingDao = userCachingDao;
     }
 
 
     @Override
     public CreateUserResult handleRequest(CreateUserRequest createUserRequest, Context context) {
         log.info("Received CreateUserRequest {}", createUserRequest);
-        User user = new User();
-        if (userCachingDao.getUserByEmail(createUserRequest.getEmail()) == null) {
 
-
-            if (createUserRequest.getEmail().contains("@")) {
-                user = createUserWithEmail(createUserRequest);
-
-
-            } else {
-                user = createUserWithIP(createUserRequest);
-            }
-
-        } else {
-            user = userCachingDao.getUserByEmail(createUserRequest.getEmail());
-        }
-
-        if (createUserRequest.getWishList() == null) {
-            user.setWishList(Arrays.asList(createUserRequest.getWishList()));
-        } else {
-            user.getWishList().add(createUserRequest.getWishList());
-        }
+        User user = createUserWithEmail(createUserRequest);
 
 
             UserModel userModel = new ModelConverter().toUserModel(user);
@@ -71,7 +54,21 @@ public class CreateUserActivity implements RequestHandler<CreateUserRequest, Cre
         }
 
         public User createUserWithEmail(CreateUserRequest createUserRequest) {
-            User user = new User();
+
+            //returns user with ip address as email or an empty new User object
+            User user = userDao.getUserByEmail(createUserRequest.getIpAddress());
+
+            List<Product> wishList = new ArrayList<>();
+
+            user.setWishList(wishList);
+
+            //already an existing user with the ipAddress - copies the wishlist over
+            //and deletes the user tied to the ipAddress;
+            if (user.getEmail() != null) {
+                user.setWishList(user.getWishList());
+                userDao.deleteUser(user);
+            }
+
             if (CreateValidName.isValidName(createUserRequest.getFirstName()) &&
                     CreateValidName.isValidName(createUserRequest.getLastName())) {
                 user.setFirstName(createUserRequest.getFirstName());
@@ -90,17 +87,18 @@ public class CreateUserActivity implements RequestHandler<CreateUserRequest, Cre
             }
 
             user.setPassword(createUserRequest.getPassword());
+
             return user;
         }
 
-        public User createUserWithIP(CreateUserRequest createUserRequest) {
-            User user = new User();
-
-            user.setEmail(createUserRequest.getEmail());
-
-            return user;
-
-        }
+//        public User createUserWithIP(CreateUserRequest createUserRequest) {
+//            User user = new User();
+//
+//            user.setEmail(createUserRequest.getEmail());
+//
+//            return user;
+//
+//        }
     }
 
 

@@ -12,7 +12,6 @@ public class ModelConverter {
                 .withLastName(user.getLastName())
                 .withEmail(user.getEmail())
                 .withPassword(user.getPassword())
-                .withPreferences(user.getPreferences())
                 .withWishList(user.getWishList())
                 .build();
     }

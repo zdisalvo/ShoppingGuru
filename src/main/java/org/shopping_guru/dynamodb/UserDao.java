@@ -23,7 +23,6 @@ public class UserDao {
 
         //TODO need to propogate this exception
         if (user == null) {
-            user.setWishList(new ArrayList<>());
             return new User();
             //throw new UserNotFoundException("Could not find user with email: " + email);
         }
@@ -45,6 +44,14 @@ public class UserDao {
         DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(DynamoDbClientProvider.getDynamoDBClient());
 
         dynamoDBMapper.save(user);
+
+        return user;
+    }
+
+    public User deleteUser(User user) {
+        DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(DynamoDbClientProvider.getDynamoDBClient());
+
+        dynamoDBMapper.delete(user);
 
         return user;
     }

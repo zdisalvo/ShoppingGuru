@@ -13,8 +13,7 @@ public class CreateUserRequest {
     private String lastName;
     private String email;
     private String password;
-    private List<String> preferences;
-    private Product wishList;
+    private String ipAddress;
 
     public CreateUserRequest() {}
 
@@ -23,7 +22,7 @@ public class CreateUserRequest {
         this.lastName = builder.lastName;
         this.email = builder.email;
         this.password = builder.password;
-        this.preferences = builder.preferences;
+        this.ipAddress = builder.ipAddress;
     }
 
     public String getFirstName() {
@@ -58,43 +57,35 @@ public class CreateUserRequest {
         this.password = password;
     }
 
-    public List<String> getPreferences() {
-        return preferences;
+    public String getIpAddress() {
+        return ipAddress;
     }
 
-    public void setPreferences(List<String> preferences) {
-        this.preferences = preferences;
-    }
-
-    public Product getWishList() {
-        return wishList;
-    }
-
-    public void setWishList(Product wishList) {
-        this.wishList = wishList;
+    public void setIpAddress(String ipAddress) {
+        this.ipAddress = ipAddress;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof UserModel)) return false;
-        UserModel userModel = (UserModel) o;
-        return Objects.equals(getFirstName(), userModel.getFirstName()) && Objects.equals(getLastName(), userModel.getLastName()) && Objects.equals(getEmail(), userModel.getEmail()) && Objects.equals(getPassword(), userModel.getPassword()) && Objects.equals(getPreferences(), userModel.getPreferences());
+        if (!(o instanceof CreateUserRequest)) return false;
+        CreateUserRequest that = (CreateUserRequest) o;
+        return Objects.equals(getFirstName(), that.getFirstName()) && Objects.equals(getLastName(), that.getLastName()) && Objects.equals(getEmail(), that.getEmail()) && Objects.equals(getPassword(), that.getPassword()) && Objects.equals(getIpAddress(), that.getIpAddress());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getFirstName(), getLastName(), getEmail(), getPassword(), getPreferences());
+        return Objects.hash(getFirstName(), getLastName(), getEmail(), getPassword(), getIpAddress());
     }
 
     @Override
     public String toString() {
-        return "UserModel{" +
+        return "CreateUserRequest{" +
                 "firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
-                ", preferences=" + preferences +
+                ", ipAddress='" + ipAddress + '\'' +
                 '}';
     }
 
@@ -105,8 +96,7 @@ public class CreateUserRequest {
         private String lastName;
         private String email;
         private String password;
-        private List<String> preferences;
-        private Product wishList;
+        private String ipAddress;
 
         public Builder withFirstName(String firstNameToUse) {
             this.firstName = firstNameToUse;
@@ -128,13 +118,8 @@ public class CreateUserRequest {
             return this;
         }
 
-        public Builder withPreferences(List<String> preferencesToUse) {
-            this.preferences = preferencesToUse;
-            return this;
-        }
-
-        public Builder withWishList(Product wishListToUse) {
-            this.wishList = wishListToUse;
+        public Builder withIpAddress(String ipAddressTouse) {
+            this.ipAddress = ipAddressTouse;
             return this;
         }
 

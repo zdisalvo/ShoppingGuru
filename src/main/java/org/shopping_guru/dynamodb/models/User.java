@@ -12,7 +12,6 @@ public class User {
     private String lastName;
     private String email;
     private String password;
-    private List<String> preferences;
     private List<Product> wishList;
 
 
@@ -53,16 +52,6 @@ public class User {
         this.password = password;
     }
 
-
-    @DynamoDBTypeConverted(converter = PreferencesListConverter.class)
-    @DynamoDBAttribute(attributeName = "preferences")
-    public List<String> getPreferences() {
-        return preferences;
-    }
-
-    public void setPreferences(List<String> preferences) {
-        this.preferences = preferences;
-    }
 
     //TODO DynamoDB Type Converter
     @DynamoDBAttribute(attributeName = "wishList")

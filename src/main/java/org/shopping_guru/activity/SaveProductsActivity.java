@@ -23,15 +23,14 @@ public class SaveProductsActivity implements RequestHandler<SaveProductsRequest,
 
     private final Logger log = LogManager.getLogger();
     private final UserDao userDao;
-    private final UserCachingDao userCachingDao;
+    //private final UserCachingDao userCachingDao;
     private final ProductDao productDao;
     private final ProductCachingDao productCachingDao;
 
     @Inject
-    public SaveProductsActivity(UserDao userDao, UserCachingDao userCachingDao, ProductDao productDao,
+    public SaveProductsActivity(UserDao userDao, ProductDao productDao,
                                 ProductCachingDao productCachingDao) {
         this.userDao = userDao;
-        this.userCachingDao = userCachingDao;
         this.productDao = productDao;
         this.productCachingDao = productCachingDao;
     }
@@ -49,16 +48,17 @@ public class SaveProductsActivity implements RequestHandler<SaveProductsRequest,
     @Override
     public synchronized String handleRequest(SaveProductsRequest saveProductsRequest, Context context) throws UserNotFoundException{
 
-        User user = userCachingDao.getUserByEmail(saveProductsRequest.getEmailOrIp());
+        User user = userDao.getUserByEmail(saveProductsRequest.getEmailOrIp());
 
         if (saveProductsRequest.getSaving() == 1) {
 
             if (user.getEmail() != null) {
-                user = userCachingDao.getUserByEmail(saveProductsRequest.getEmailOrIp());
+                user = userDao.getUserByEmail(saveProductsRequest.getEmailOrIp());
                 if (user.getWishList() == null) user.setWishList(new ArrayList<>());
             } else {
                 user.setEmail(saveProductsRequest.getEmailOrIp());
                 user.setWishList(new ArrayList<>());
+                userDao.saveUser(user);
             }
 
 //        try {

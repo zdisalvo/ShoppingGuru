@@ -12,7 +12,6 @@ public class UserModel {
     private String lastName;
     private String email;
     private String password;
-    private List<String> preferences;
     private List<Product> wishList;
 
     public UserModel() {}
@@ -22,7 +21,7 @@ public class UserModel {
         this.lastName = builder.lastName;
         this.email = builder.email;
         this.password = builder.password;
-        this.preferences = builder.preferences;
+        this.wishList = builder.wishList;
     }
 
     public String getFirstName() {
@@ -57,14 +56,6 @@ public class UserModel {
         this.password = password;
     }
 
-    public List<String> getPreferences() {
-        return preferences;
-    }
-
-    public void setPreferences(List<String> preferences) {
-        this.preferences = preferences;
-    }
-
     public List<Product> getWishList() {
         return wishList;
     }
@@ -78,12 +69,12 @@ public class UserModel {
         if (this == o) return true;
         if (!(o instanceof UserModel)) return false;
         UserModel userModel = (UserModel) o;
-        return Objects.equals(getFirstName(), userModel.getFirstName()) && Objects.equals(getLastName(), userModel.getLastName()) && Objects.equals(getEmail(), userModel.getEmail()) && Objects.equals(getPassword(), userModel.getPassword()) && Objects.equals(getPreferences(), userModel.getPreferences());
+        return Objects.equals(getFirstName(), userModel.getFirstName()) && Objects.equals(getLastName(), userModel.getLastName()) && Objects.equals(getEmail(), userModel.getEmail()) && Objects.equals(getPassword(), userModel.getPassword()) && Objects.equals(getWishList(), userModel.getWishList());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getFirstName(), getLastName(), getEmail(), getPassword(), getPreferences());
+        return Objects.hash(getFirstName(), getLastName(), getEmail(), getPassword(), getWishList());
     }
 
     @Override
@@ -93,7 +84,7 @@ public class UserModel {
                 ", lastName='" + lastName + '\'' +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
-                ", preferences=" + preferences +
+                ", wishList=" + wishList +
                 '}';
     }
 
@@ -104,7 +95,6 @@ public class UserModel {
         private String lastName;
         private String email;
         private String password;
-        private List<String> preferences;
         private List<Product> wishList;
 
         public Builder withFirstName(String firstNameToUse) {
@@ -124,11 +114,6 @@ public class UserModel {
 
         public Builder withPassword(String passwordToUse) {
             this.password = passwordToUse;
-            return this;
-        }
-
-        public Builder withPreferences(List<String> preferencesToUse) {
-            this.preferences = preferencesToUse;
             return this;
         }
 
