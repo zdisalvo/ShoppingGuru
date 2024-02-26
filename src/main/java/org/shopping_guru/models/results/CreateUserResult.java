@@ -1,12 +1,15 @@
 package org.shopping_guru.models.results;
 
+import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
 import org.shopping_guru.models.UserModel;
 
-public class CreateUserResult {
+public class CreateUserResult extends APIGatewayProxyResponseEvent{
 
     private UserModel user;
 
+
     public CreateUserResult(Builder builder) {this.user = builder.user; }
+
 
     public UserModel getUser() {return user;}
 
@@ -23,6 +26,16 @@ public class CreateUserResult {
         }
 
         public CreateUserResult build() {return new CreateUserResult(this);}
+    }
+
+
+    public void setStatusCode(int statusCode) {
+        // Check if the status code is 400 and set a custom response if it is
+        if (statusCode == 400) {
+            setBody("Custom 400 Error Message");
+        }
+        // Call the parent class method to set the status code
+        super.setStatusCode(statusCode);
     }
 
 }

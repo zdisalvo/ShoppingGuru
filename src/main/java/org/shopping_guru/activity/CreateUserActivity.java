@@ -2,12 +2,14 @@ package org.shopping_guru.activity;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
+import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
 import org.shopping_guru.converters.ModelConverter;
 import org.shopping_guru.dynamodb.UserCachingDao;
 import org.shopping_guru.dynamodb.UserDao;
 import org.shopping_guru.dynamodb.models.Product;
 import org.shopping_guru.dynamodb.models.User;
 import org.shopping_guru.exceptions.InvalidAttributeException;
+import org.shopping_guru.exceptions.UserAlreadyExistsException;
 import org.shopping_guru.models.UserModel;
 import org.shopping_guru.models.requests.CreateUserRequest;
 import org.shopping_guru.models.results.CreateUserResult;
@@ -22,6 +24,12 @@ import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+//import javax.servlet.ServletException;
+//import javax.servlet.annotation.WebServlet;
+//import javax.servlet.http.HttpServlet;
+//import javax.servlet.http.HttpServletRequest;
+//import javax.servlet.http.HttpServletResponse;
 
 public class CreateUserActivity implements RequestHandler<CreateUserRequest, CreateUserResult> {
 
@@ -40,8 +48,25 @@ public class CreateUserActivity implements RequestHandler<CreateUserRequest, Cre
     @Override
     public CreateUserResult handleRequest(CreateUserRequest createUserRequest, Context context) {
         log.info("Received CreateUserRequest {}", createUserRequest);
+        User user = new User();
 
-        User user = createUserWithEmail(createUserRequest);
+        UserModel userModelError = new ModelConverter().toUserModel(user);
+
+        //user = createUserWithEmail(createUserRequest);
+
+
+
+
+        try {
+            user = createUserWithEmail(createUserRequest);
+        } catch (InvalidAttributeException e) {
+            CreateUserResult createUserResult = CreateUserResult.builder().build();
+            createUserResult.setStatusCode(400);
+            return createUserResult;
+
+        } catch (UserAlreadyExistsException e) {
+            throw new RuntimeException("A user with this email already exists");
+        }
 
 
             UserModel userModel = new ModelConverter().toUserModel(user);
@@ -81,8 +106,15 @@ public class CreateUserActivity implements RequestHandler<CreateUserRequest, Cre
             }
 
             if (CreateValidEmail.isValidEmail(createUserRequest.getEmail())) {
-                user.setEmail(createUserRequest.getEmail());
+                User checkUser = userDao.getUserByEmail(createUserRequest.getEmail());
+                if (checkUser.getEmail() != null) {
+
+                    throw new UserAlreadyExistsException("A user with this email already exists");
+
+                } else
+                    user.setEmail(createUserRequest.getEmail());
             } else {
+
                 throw new InvalidAttributeException("Invalid email. You entered: " + createUserRequest.getEmail());
             }
 

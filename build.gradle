@@ -99,6 +99,10 @@ dependencies {
 
     // Google Custom Search API
     //implementation 'com.google.apis:google-api-services-customsearch:v1-rev116-2.20.0'
+
+    // Servlet API
+    implementation 'javax.servlet:javax.servlet-api:4.0.1'
+
 }
 
 test {
