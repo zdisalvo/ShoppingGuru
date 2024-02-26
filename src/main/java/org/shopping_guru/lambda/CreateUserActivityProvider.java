@@ -10,12 +10,12 @@ import org.shopping_guru.models.requests.CreateUserRequest;
 import org.shopping_guru.models.requests.DisplaySavedRequest;
 import org.shopping_guru.models.results.CreateUserResult;
 
-public class CreateUserActivityProvider implements RequestHandler<CreateUserRequest, CreateUserResult> {
+public class CreateUserActivityProvider implements RequestHandler<CreateUserRequest, String> {
 
     public CreateUserActivityProvider() {}
 
     @Override
-    public CreateUserResult handleRequest(final CreateUserRequest createUserRequest, Context context) {
+    public String handleRequest(final CreateUserRequest createUserRequest, Context context) {
         return getDagger().handleRequest(createUserRequest, context);
     }
 

@@ -29,10 +29,10 @@ public class CreateUserResult extends APIGatewayProxyResponseEvent{
     }
 
 
-    public void setStatusCode(int statusCode) {
+    public void setStatusCode(int statusCode, String body) {
         // Check if the status code is 400 and set a custom response if it is
         if (statusCode == 400) {
-            setBody("Custom 400 Error Message");
+            setBody(body);
         }
         // Call the parent class method to set the status code
         super.setStatusCode(statusCode);

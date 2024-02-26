@@ -3,6 +3,7 @@ package org.shopping_guru.activity;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
+import org.shopping_guru.converters.CreateUserResponseConverter;
 import org.shopping_guru.converters.ModelConverter;
 import org.shopping_guru.dynamodb.UserCachingDao;
 import org.shopping_guru.dynamodb.UserDao;
@@ -31,7 +32,7 @@ import java.util.List;
 //import javax.servlet.http.HttpServletRequest;
 //import javax.servlet.http.HttpServletResponse;
 
-public class CreateUserActivity implements RequestHandler<CreateUserRequest, CreateUserResult> {
+public class CreateUserActivity implements RequestHandler<CreateUserRequest, String> {
 
     private final Logger log = LogManager.getLogger();
     private final UserDao userDao;
@@ -46,7 +47,7 @@ public class CreateUserActivity implements RequestHandler<CreateUserRequest, Cre
 
 
     @Override
-    public CreateUserResult handleRequest(CreateUserRequest createUserRequest, Context context) {
+    public String handleRequest(CreateUserRequest createUserRequest, Context context) {
         log.info("Received CreateUserRequest {}", createUserRequest);
         User user = new User();
 
@@ -60,12 +61,16 @@ public class CreateUserActivity implements RequestHandler<CreateUserRequest, Cre
         try {
             user = createUserWithEmail(createUserRequest);
         } catch (InvalidAttributeException e) {
+            String body = "Invalid email. You entered: " + createUserRequest.getEmail();
             CreateUserResult createUserResult = CreateUserResult.builder().build();
-            createUserResult.setStatusCode(400);
-            return createUserResult;
+            createUserResult.setStatusCode(400, body);
+            return CreateUserResponseConverter.toJson(createUserResult);
 
         } catch (UserAlreadyExistsException e) {
-            throw new RuntimeException("A user with this email already exists");
+            String body = "A user with this email already exists";
+            CreateUserResult createUserResult = CreateUserResult.builder().build();
+            createUserResult.setStatusCode(400, body);
+            return CreateUserResponseConverter.toJson(createUserResult);
         }
 
 
@@ -73,9 +78,12 @@ public class CreateUserActivity implements RequestHandler<CreateUserRequest, Cre
 
             userDao.saveUser(user);
 
-            return CreateUserResult.builder()
-                    .withUser(userModel)
-                    .build();
+            return CreateUserResponseConverter.toJson(CreateUserResult.builder()
+                    .withUser(userModel).build());
+
+//            return CreateUserResult.builder()
+//                    .withUser(userModel)
+//                    .build();
         }
 
         public User createUserWithEmail(CreateUserRequest createUserRequest) {
