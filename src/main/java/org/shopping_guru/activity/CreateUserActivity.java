@@ -100,6 +100,8 @@ public class CreateUserActivity implements RequestHandler<CreateUserRequest, Str
             if (user.getEmail() != null) {
                 user.setWishList(user.getWishList());
                 userDao.deleteUser(user);
+            } else {
+                
             }
 
             if (CreateValidName.isValidName(createUserRequest.getFirstName()) &&

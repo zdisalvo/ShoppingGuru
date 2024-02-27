@@ -1,12 +1,14 @@
 package org.shopping_guru.dynamodb;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
+import org.shopping_guru.dynamodb.models.Product;
 import org.shopping_guru.dynamodb.models.User;
 import org.shopping_guru.exceptions.UserNotFoundException;
 import org.shopping_guru.util.DynamoDbClientProvider;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
+import java.util.List;
 
 public class UserDao {
 
@@ -23,7 +25,10 @@ public class UserDao {
 
         //TODO need to propogate this exception
         if (user == null) {
-            return new User();
+            User newUser = new User();
+            List<Product> noSavedProducts = new ArrayList<>();
+            newUser.setWishList(noSavedProducts);
+            return newUser;
             //throw new UserNotFoundException("Could not find user with email: " + email);
         }
 
